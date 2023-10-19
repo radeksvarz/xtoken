@@ -1,0 +1,35 @@
+{
+  "editor.formatOnSave": true,
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  // "solidity.formatter": "customLocalFormatters",
+  // "solidity.formatter": "forge",
+
+  // commented out: https://github.com/foundry-rs/foundry/issues/2019
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+
+  "solidity.compileUsingRemoteVersion": "v0.8.19+commit.7dd6d404",
+  "solidity.defaultCompiler": "remote",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#11a162",
+    "activityBar.background": "#11a162",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#e2c5f9",
+    "activityBarBadge.foreground": "#15202b",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#11a162",
+    "statusBar.background": "#0c7346",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#11a162",
+    "statusBarItem.remoteBackground": "#0c7346",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#0c7346",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#0c734699",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#0C7346"
+}
