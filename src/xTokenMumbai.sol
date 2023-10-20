@@ -42,6 +42,7 @@ contract XTokenMumbai is
         __Pausable_init();
         __AccessManagement_init(initialOwner);
         __ERC20Permit_init("MYTKN");
+        __ERC20PaymentReference_init();
         __XERC20_init();
         __UUPSUpgradeable_init();
     }

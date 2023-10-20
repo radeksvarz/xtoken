@@ -45,8 +45,11 @@ contract XTokenArbitrum is
         __ERC20_init("MYTKN", "MYTKN");
 
         __Pausable_init();
+        __FeaturePausable_init();
         __AccessManagement_init(initialOwner);
         __ERC20Permit_init("MYTKN");
+        __FlashMint_init(5, type(uint256).max, initialOwner);
+        __ERC20PaymentReference_init();
         __XERC20_init();
         __UUPSUpgradeable_init();
     }
