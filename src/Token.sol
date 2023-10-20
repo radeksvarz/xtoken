@@ -35,6 +35,11 @@ contract Token is
 
     bytes32 public constant FLASH_MINT_FEATURE = keccak256("feature.FLASH_MINT");
 
+    // TODO TBD
+    // Bridging embedded Lockbox made up address: "xerc20xerc20xerc20xe"
+    // Lockbox implemented here in order to save 1 approval
+    // bytes32 private constant XCHAIN_LOCKBOX_ADDRESS = 0x7865726332307865726332307865726332307865;
+
     constructor() {
         _disableInitializers();
     }
@@ -154,6 +159,12 @@ contract Token is
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override whenNotPaused {
         super._beforeTokenTransfer(from, to, amount);
     }
+
+    //
+    // TODO TBD Lockbox functions
+    //
+    // MULTICHAIN functions
+    //
 
     //
     // FLASHMINT functions

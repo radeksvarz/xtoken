@@ -11,15 +11,17 @@ import {XERC20Upgradeable} from "./XERC20Upgradeable.sol";
 
 import {AccessManagementUpgradeable} from "./AccessManagementUpgradeable.sol";
 import {ERC20PaymentReferenceUpgradeable} from "./ERC20PaymentReferenceUpgradeable.sol";
+import {FeaturePausableUpgradeable} from "./FeaturePausableUpgradeable.sol";
+import {FlashMintUpgradeable} from "./FlashMintUpgradeable.sol";
 
-contract XTokenGnosis is
+contract XTokenArbitrum is
     Initializable,
     ERC20Upgradeable,
-    // FeaturePausableUpgradeable,
+    FeaturePausableUpgradeable,
     PausableUpgradeable,
     AccessManagementUpgradeable,
     ERC20PermitUpgradeable,
-    // FlashMintUpgradeable,
+    FlashMintUpgradeable,
     ERC20PaymentReferenceUpgradeable,
     XERC20Upgradeable,
     UUPSUpgradeable
@@ -31,6 +33,9 @@ contract XTokenGnosis is
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant RESCUER_ROLE = keccak256("RESCUER_ROLE");
     bytes32 public constant BRIDGE_ADMIN_ROLE = keccak256("BRIDGE_ADMIN_ROLE");
+    bytes32 public constant FLASH_MINT_ADMIN_ROLE = keccak256("FLASH_MINT_ADMIN_ROLE");
+
+    bytes32 public constant FLASH_MINT_FEATURE = keccak256("feature.FLASH_MINT");
 
     constructor() {
         _disableInitializers();
@@ -62,6 +67,16 @@ contract XTokenGnosis is
     /// @notice Returns contract from the emergency paused state to the normal state.
     function unpause() external virtual onlyRole(PAUSER_ROLE) {
         _unpause();
+    }
+
+    /// @notice Triggers emergency stopped state of Flashminting feature
+    function flashMintPause() external virtual onlyRole(FLASH_MINT_ADMIN_ROLE) {
+        _pauseFeature(FLASH_MINT_FEATURE);
+    }
+
+    /// @notice Returns from emergency stopped state of Flashminting feature
+    function flashMintUnpause() external virtual onlyRole(FLASH_MINT_ADMIN_ROLE) {
+        _unpauseFeature(FLASH_MINT_FEATURE);
     }
 
     /// @notice Authorisation check of the upgrade mechanisms
@@ -157,6 +172,46 @@ contract XTokenGnosis is
     // Adds pausability check to the `_beforeTokenTransfer` hook
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override whenNotPaused {
         super._beforeTokenTransfer(from, to, amount);
+    }
+
+    //
+    // FLASHMINT functions
+    //
+
+    /// @notice Returns the maximum amount of tokens available for flashmint loan.
+    /// maxFloashLoan is always less than or equal to unsupplied amount, flashMintCeiling and thus _FLASHMINTHARDCAP
+    /// @dev Added pausability check.
+    /// Caller can have any or no role assigned.
+    function maxFlashLoan(address token) public view virtual override anyRole returns (uint256) {
+        if (paused() || featurePaused(FLASH_MINT_FEATURE)) return 0;
+        return super.maxFlashLoan(token);
+    }
+
+    /// @dev Hook that is called before flash minting with pausability check
+    function _beforeFlashMint(
+        address borrower,
+        uint256 amount
+    ) internal virtual override whenNotPaused whenFeatureNotPaused(FLASH_MINT_FEATURE) {
+        super._beforeFlashMint(borrower, amount);
+    }
+
+    /// @notice Sets new `flashMintCeiling` that caps flashmint volume
+    /// New Ceiling is always less than or equal to _FLASHMINTHARDCAP
+    /// Caller MUST have the FLASH_MINT_ADMIN_ROLE
+    function setFlashMintCeiling(uint256 newCeiling) external virtual onlyRole(FLASH_MINT_ADMIN_ROLE) {
+        _setFlashMintCeiling(newCeiling);
+    }
+
+    /// @notice Sets new `flashMintFeeBps` with max 10000 bps
+    /// Caller MUST have the FLASH_MINT_ADMIN_ROLE
+    function setFlashMintFeeBps(uint16 newFee) external virtual onlyRole(FLASH_MINT_ADMIN_ROLE) {
+        _setFlashMintFeeBps(newFee);
+    }
+
+    /// @notice Sets new `flashMintFeeReceiver` the receiver address of the flash fee.
+    /// Caller MUST have the FLASH_MINT_ADMIN_ROLE
+    function setFlashMintFeeReceiver(address newReceiver) external virtual onlyRole(FLASH_MINT_ADMIN_ROLE) {
+        _setFlashMintFeeReceiver(newReceiver);
     }
 
     //
