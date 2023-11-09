@@ -12,7 +12,7 @@ import {XERC20Upgradeable} from "./XERC20Upgradeable.sol";
 import {AccessManagementUpgradeable} from "./AccessManagementUpgradeable.sol";
 import {ERC20PaymentReferenceUpgradeable} from "./ERC20PaymentReferenceUpgradeable.sol";
 
-contract XTokenMumbai is
+contract XTokenPolygon is
     Initializable,
     ERC20Upgradeable,
     // FeaturePausableUpgradeable,
